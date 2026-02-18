@@ -2,6 +2,7 @@ import streamlit as st
 import streamlit as st
 import numpy as np
 from PIL import Image, ImageOps, ImageChops, ImageEnhance, ImageFilter
+import plotly.graph_objects as go
 import os
 
 # Try importing TensorFlow, handle failure gracefully for UI demo
@@ -38,60 +39,100 @@ st.markdown("""
     /* Import Professional Mono Font */
     @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&display=swap');
     
-    /* Global Styles - Forensic Lab Theme */
+    /* 3D Global Perspective */
     html, body, [class*="css"] {
         font-family: 'Roboto Mono', monospace;
-        background-color: #0b0c10; /* Deep Slate */
+        background: radial-gradient(circle at 50% 50%, #1f2833 0%, #0b0c10 100%);
         color: #c5c6c7;
+        overflow-x: hidden;
     }
     
-    /* Header - Clean & Technical */
+    /* 3D Grid Background Animation */
+    @keyframes gridMove {
+        0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+        100% { transform: perspective(500px) rotateX(60deg) translateY(40px); }
+    }
+    
+    .stApp::before {
+        content: "";
+        position: fixed;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: 
+            linear-gradient(0deg, transparent 24%, rgba(69, 162, 158, 0.1) 25%, rgba(69, 162, 158, 0.1) 26%, transparent 27%, transparent 74%, rgba(69, 162, 158, 0.1) 75%, rgba(69, 162, 158, 0.1) 76%, transparent 77%, transparent),
+            linear-gradient(90deg, transparent 24%, rgba(69, 162, 158, 0.1) 25%, rgba(69, 162, 158, 0.1) 26%, transparent 27%, transparent 74%, rgba(69, 162, 158, 0.1) 75%, rgba(69, 162, 158, 0.1) 76%, transparent 77%, transparent);
+        background-size: 50px 50px;
+        transform: perspective(500px) rotateX(60deg);
+        animation: gridMove 2s infinite linear;
+        z-index: -1;
+        opacity: 0.3;
+        pointer-events: none;
+    }
+
+    /* Header - 3D Floating Bar */
     .main-header {
         text-align: left;
         padding: 20px;
-        border-bottom: 2px solid #45a29e; /* Teal Highlight */
-        background-color: #1f2833;
+        background: rgba(31, 40, 51, 0.9);
+        backdrop-filter: blur(10px);
+        border-bottom: 2px solid #45a29e;
+        border-right: 2px solid #45a29e;
         margin-bottom: 30px;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        box-shadow: 10px 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(69, 162, 158, 0.2);
+        transform: translateZ(20px);
+        border-radius: 5px;
     }
     .main-header h1 {
         font-family: 'Roboto Mono', monospace;
         font-size: 24px;
-        color: #66fcf1; /* Cyan/Teal */
+        color: #66fcf1;
         text-transform: uppercase;
         font-weight: 700;
         margin: 0;
-        letter-spacing: 1px;
-    }
-    .header-stat {
-        font-size: 12px;
-        color: #45a29e;
+        letter-spacing: 2px;
+        text-shadow: 0 0 10px rgba(102, 252, 241, 0.7);
     }
 
-    /* Result Cards - Data Viz Style */
+    /* Result Cards - 3D Floating Glass Panels */
     .result-card {
         padding: 25px;
         border-left: 5px solid #66fcf1;
-        background-color: #1f2833;
+        background: linear-gradient(135deg, rgba(31, 40, 51, 0.9), rgba(11, 12, 16, 0.95));
+        backdrop-filter: blur(5px);
         text-align: left;
         margin-top: 20px;
         position: relative;
+        box-shadow: 15px 15px 40px rgba(0,0,0,0.6), inset 1px 1px 0 rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        transform-style: preserve-3d;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .result-card:hover {
+        transform: translateY(-5px) rotateX(2deg) rotateY(2deg);
+        box-shadow: 20px 20px 50px rgba(0,0,0,0.7), 0 0 20px rgba(69, 162, 158, 0.2);
     }
     
     .deepfake-card {
-        border-left-color: #fc4445; /* Alert Red */
-        background-color: rgba(60, 10, 10, 0.3);
+        border-left-color: #fc4445;
+        background: linear-gradient(135deg, rgba(60, 10, 10, 0.8), rgba(20, 0, 0, 0.9));
+        box-shadow: 15px 15px 40px rgba(252, 68, 69, 0.2);
     }
     .real-card {
-        border-left-color: #66fcf1; /* Safe Teal */
+        border-left-color: #66fcf1;
+        box-shadow: 15px 15px 40px rgba(102, 252, 241, 0.1);
     }
 
     .stat-value {
         font-size: 42px;
         font-weight: bold;
         color: #fff;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
     .stat-label {
         font-size: 12px;
@@ -100,7 +141,7 @@ st.markdown("""
         letter-spacing: 2px;
     }
 
-    /* Terminal Log - Simplified */
+    /* Terminal Log - Retro 3D Screen */
     .terminal-log {
         font-family: 'Roboto Mono', monospace;
         font-size: 11px;
@@ -110,13 +151,40 @@ st.markdown("""
         border: 1px solid #333;
         height: 180px;
         overflow-y: auto;
-        opacity: 0.9;
+        opacity: 0.95;
+        box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.1), 5px 5px 15px rgba(0,0,0,0.5);
+        border-radius: 4px;
+        transform: perspective(600px) rotateX(5deg);
+        margin-bottom: 20px;
     }
     
-    /* Progress Bar Override */
-    .stProgress > div > div > div > div {
-        background-color: #45a29e;
+    /* 3D Inputs */
+    .stTextInput > div > div > input, .stFileUploader {
+        background-color: #1f2833;
+        color: #66fcf1;
+        border-radius: 5px;
+        box-shadow: inset 3px 3px 6px #0b0c10, inset -3px -3px 6px #334050;
+        border: none;
     }
+    
+    /* Progress Bar 3D Glow */
+    .stProgress > div > div > div > div {
+        background: linear-gradient(90deg, #45a29e, #66fcf1);
+        box-shadow: 0 0 10px #66fcf1;
+    }
+    
+    /* Buttons 3D */
+    .stButton > button {
+        background: linear-gradient(145deg, #1f2833, #151b22);
+        box-shadow: 5px 5px 10px #0b0c10, -5px -5px 10px #334050;
+        color: #66fcf1;
+        border: none;
+        transition: all 0.2s;
+    }
+    .stButton > button:active {
+        box-shadow: inset 5px 5px 10px #0b0c10, inset -5px -5px 10px #334050;
+    }
+    
     </style>
     """, unsafe_allow_html=True)
 
@@ -203,9 +271,38 @@ def plot_fft_spectrum(image_pil):
     fshift = np.fft.fftshift(f)
     magnitude_spectrum = 20 * np.log(np.abs(fshift) + 1e-9) # Log scale
     
-    # Normalize for display (0-255)
     magnitude_spectrum = (magnitude_spectrum / np.max(magnitude_spectrum)) * 255
     return Image.fromarray(magnitude_spectrum.astype('uint8'))
+
+def plot_3d_topology(image_pil):
+    """
+    Generates a 3D surface plot of the image pixel intensity.
+    """
+    # Resize for performance as surface plots can be heavy
+    img_small = image_pil.convert('L').resize((128, 128)) 
+    z_data = np.array(img_small)
+    
+    fig = go.Figure(data=[go.Surface(z=z_data, colorscale='Electric')])
+    
+    fig.update_layout(
+        title='3D Pixel Intensity Topology',
+        autosize=False,
+        width=700,
+        height=600,
+        margin=dict(l=65, r=50, b=65, t=90),
+        scene=dict(
+            xaxis_title='X Axis',
+            yaxis_title='Y Axis',
+            zaxis_title='Pixel Intensity',
+            camera=dict(
+                eye=dict(x=1.5, y=1.5, z=1.2)
+            )
+        ),
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        modebar=dict(bgcolor='rgba(0,0,0,0)', color='#66fcf1'),
+    )
+    return fig
 
 # --- Main Interface ---
 st.markdown("### 🧬 Analysis Dashboard")
@@ -218,7 +315,7 @@ if uploaded_file is not None:
         image = Image.open(uploaded_file).convert("RGB")
         
         # Tabs for "Advanced" Feel
-        tab1, tab2, tab3 = st.tabs(["🔍 Detection Result", "📉 Error Level Analysis (ELA)", "🌊 Frequency Spectrum"])
+        tab1, tab2, tab3, tab4 = st.tabs(["🔍 Detection Result", "📉 Error Level Analysis (ELA)", "🌊 Frequency Spectrum", "🧊 3D Topology"])
 
         # --- TAB 1: Main Classification ---
         with tab1:
@@ -417,6 +514,19 @@ if uploaded_file is not None:
             fft_img = plot_fft_spectrum(image)
             st.image(fft_img, caption="Magnitude Spectrum (Log Scale)", use_column_width=True)
             st.caption("Look for: Star-shaped patterns or strong geometric lines which may indicate upsampling artifacts common in Deepfakes.")
+
+        # --- TAB 4: 3D Topology ---
+        with tab4:
+            st.markdown("""
+            **3D Pixel Topology** renders the image brightness as height in a 3D space. 
+            This allows forensic analysts to visualize unnatural smoothness or inconsistent texture patterns.
+            """)
+            if st.button("Generate 3D Surface Plot"):
+                with st.spinner("Rendering 3D Mesh..."):
+                    fig_3d = plot_3d_topology(image)
+                    st.plotly_chart(fig_3d, use_container_width=True)
+            else:
+                st.info("Click the button above to generate the 3D topology. This requires heavier computation.")
 
     except Exception as e:
         st.error(f"Error processing image: {e}")
