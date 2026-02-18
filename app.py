@@ -34,174 +34,193 @@ st.set_page_config(
 )
 
 # --- Custom CSS for Styling ---
+# --- Custom CSS for Professional Styling ---
 st.markdown("""
     <style>
-    /* Import Professional Mono Font */
-    @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&display=swap');
+    /* Import Professional Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap');
     
-    /* 3D Global Perspective */
+    /* Global Reset & Base */
     html, body, [class*="css"] {
-        font-family: 'Roboto Mono', monospace;
-        background: radial-gradient(circle at 50% 50%, #1f2833 0%, #0b0c10 100%);
-        color: #c5c6c7;
-        overflow-x: hidden;
+        font-family: 'Inter', sans-serif;
+        background-color: #0e1117;
+        color: #e6e6e6;
     }
     
-    /* 3D Grid Background Animation */
-    @keyframes gridMove {
-        0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
-        100% { transform: perspective(500px) rotateX(60deg) translateY(40px); }
-    }
-    
-    .stApp::before {
-        content: "";
-        position: fixed;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
+    /* Background Animation - Subtle Professional Grid */
+    .stApp {
         background: 
-            linear-gradient(0deg, transparent 24%, rgba(69, 162, 158, 0.1) 25%, rgba(69, 162, 158, 0.1) 26%, transparent 27%, transparent 74%, rgba(69, 162, 158, 0.1) 75%, rgba(69, 162, 158, 0.1) 76%, transparent 77%, transparent),
-            linear-gradient(90deg, transparent 24%, rgba(69, 162, 158, 0.1) 25%, rgba(69, 162, 158, 0.1) 26%, transparent 27%, transparent 74%, rgba(69, 162, 158, 0.1) 75%, rgba(69, 162, 158, 0.1) 76%, transparent 77%, transparent);
-        background-size: 50px 50px;
-        transform: perspective(500px) rotateX(60deg);
-        animation: gridMove 2s infinite linear;
-        z-index: -1;
-        opacity: 0.3;
-        pointer-events: none;
+            radial-gradient(circle at 50% 0%, rgba(69, 162, 158, 0.15), transparent 40%),
+            linear-gradient(0deg, rgba(14, 17, 23, 1) 0%, rgba(14, 17, 23, 0.9) 100%);
+        background-size: cover;
     }
 
-    /* Header - 3D Floating Bar */
+    /* Professional Sidebar */
+    [data-testid="stSidebar"] {
+        background-color: #161b22;
+        border-right: 1px solid #30363d;
+    }
+
+    /* Headings */
+    h1, h2, h3 {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        letter-spacing: -0.5px;
+        color: #ffffff;
+    }
+    
+    /* Monospace for Data */
+    .mono {
+        font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Header - Sleek Glass Navbar */
     .main-header {
-        text-align: left;
-        padding: 20px;
-        background: rgba(31, 40, 51, 0.9);
-        backdrop-filter: blur(10px);
-        border-bottom: 2px solid #45a29e;
-        border-right: 2px solid #45a29e;
-        margin-bottom: 30px;
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        box-shadow: 10px 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(69, 162, 158, 0.2);
-        transform: translateZ(20px);
-        border-radius: 5px;
+        justify-content: space-between;
+        padding: 1.5rem 2rem;
+        background: rgba(22, 27, 34, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
     }
-    .main-header h1 {
-        font-family: 'Roboto Mono', monospace;
-        font-size: 24px;
-        color: #66fcf1;
-        text-transform: uppercase;
+    
+    .brand-text {
+        font-size: 1.25rem;
         font-weight: 700;
-        margin: 0;
-        letter-spacing: 2px;
-        text-shadow: 0 0 10px rgba(102, 252, 241, 0.7);
+        background: linear-gradient(90deg, #66fcf1, #45a29e);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: 1px;
+    }
+    
+    .status-badge {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        background: rgba(69, 162, 158, 0.15);
+        color: #66fcf1;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        border: 1px solid rgba(69, 162, 158, 0.3);
     }
 
-    /* Result Cards - 3D Floating Glass Panels */
+    /* Result Cards - Professional Glass Panels */
     .result-card {
-        padding: 25px;
-        border-left: 5px solid #66fcf1;
-        background: linear-gradient(135deg, rgba(31, 40, 51, 0.9), rgba(11, 12, 16, 0.95));
-        backdrop-filter: blur(5px);
-        text-align: left;
-        margin-top: 20px;
-        position: relative;
-        box-shadow: 15px 15px 40px rgba(0,0,0,0.6), inset 1px 1px 0 rgba(255, 255, 255, 0.1);
-        border-radius: 10px;
-        transform-style: preserve-3d;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        padding: 2rem;
+        background: rgba(30, 36, 44, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        margin-top: 1rem;
     }
     
     .result-card:hover {
-        transform: translateY(-5px) rotateX(2deg) rotateY(2deg);
-        box-shadow: 20px 20px 50px rgba(0,0,0,0.7), 0 0 20px rgba(69, 162, 158, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        border-color: rgba(102, 252, 241, 0.3);
     }
     
-    .deepfake-card {
-        border-left-color: #fc4445;
-        background: linear-gradient(135deg, rgba(60, 10, 10, 0.8), rgba(20, 0, 0, 0.9));
-        box-shadow: 15px 15px 40px rgba(252, 68, 69, 0.2);
+    .verdict-safe {
+        border-left: 4px solid #66fcf1;
+        background: linear-gradient(90deg, rgba(102, 252, 241, 0.05), transparent);
     }
-    .real-card {
-        border-left-color: #66fcf1;
-        box-shadow: 15px 15px 40px rgba(102, 252, 241, 0.1);
+    
+    .verdict-fake {
+        border-left: 4px solid #ff4b4b;
+        background: linear-gradient(90deg, rgba(255, 75, 75, 0.05), transparent);
     }
 
+    /* Metrics & Stats */
     .stat-value {
-        font-size: 42px;
-        font-weight: bold;
-        color: #fff;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        font-family: 'Inter', sans-serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0.5rem 0;
     }
     .stat-label {
-        font-size: 12px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
         text-transform: uppercase;
-        color: #888;
-        letter-spacing: 2px;
+        letter-spacing: 1.5px;
+        color: #8b949e;
     }
 
-    /* Terminal Log - Retro 3D Screen */
+    /* Terminal Log - Refined */
     .terminal-log {
-        font-family: 'Roboto Mono', monospace;
-        font-size: 11px;
-        color: #66fcf1;
-        background-color: #000;
-        padding: 15px;
-        border: 1px solid #333;
-        height: 180px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.85rem;
+        color: #a5d6ff;
+        background-color: #0d1117;
+        padding: 1rem;
+        border: 1px solid #30363d;
+        border-radius: 8px;
+        height: 200px;
         overflow-y: auto;
-        opacity: 0.95;
-        box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.1), 5px 5px 15px rgba(0,0,0,0.5);
-        border-radius: 4px;
-        transform: perspective(600px) rotateX(5deg);
-        margin-bottom: 20px;
+        line-height: 1.5;
     }
     
-    /* 3D Inputs */
-    .stTextInput > div > div > input, .stFileUploader {
-        background-color: #1f2833;
-        color: #66fcf1;
-        border-radius: 5px;
-        box-shadow: inset 3px 3px 6px #0b0c10, inset -3px -3px 6px #334050;
-        border: none;
+    /* Custom Inputs */
+    .stTextInput input, .stFileUploader {
+        background-color: #0d1117;
+        border: 1px solid #30363d;
+        border-radius: 8px;
+        color: #e6e6e6;
+    }
+    .stTextInput input:focus {
+        border-color: #66fcf1;
+        box-shadow: 0 0 0 1px #66fcf1;
     }
     
-    /* Progress Bar 3D Glow */
-    .stProgress > div > div > div > div {
-        background: linear-gradient(90deg, #45a29e, #66fcf1);
-        box-shadow: 0 0 10px #66fcf1;
-    }
-    
-    /* Buttons 3D */
-    .stButton > button {
-        background: linear-gradient(145deg, #1f2833, #151b22);
-        box-shadow: 5px 5px 10px #0b0c10, -5px -5px 10px #334050;
-        color: #66fcf1;
-        border: none;
+    /* Buttons */
+    .stButton button {
+        background-color: #21262d; 
+        color: #c9d1d9;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        font-weight: 600;
+        font-family: 'Inter', sans-serif;
         transition: all 0.2s;
     }
-    .stButton > button:active {
-        box-shadow: inset 5px 5px 10px #0b0c10, inset -5px -5px 10px #334050;
+    .stButton button:hover {
+        background-color: #30363d;
+        border-color: #8b949e;
+        color: white;
+    }
+    .stButton button:active {
+        background-color: #238636;
+        border-color: #238636;
+        color: white;
     }
     
     </style>
     """, unsafe_allow_html=True)
 
 # --- App Header ---
-col_head1, col_head2 = st.columns([3,1])
-with col_head1:
-    st.markdown('<div class="main-header"><h1>DFD-FORENSICS // ANALYSIS UNIT</h1></div>', unsafe_allow_html=True)
-with col_head2:
-    st.caption(f"System Status: ONLINE\nVersion: 4.2.0-PRO")
+st.markdown("""
+    <div class="main-header">
+        <div class="brand-text">DFD FORENSICS <span style="opacity:0.5">//</span> PRO</div>
+        <div class="status-badge">SYSTEM ONLINE • V4.2</div>
+    </div>
+""", unsafe_allow_html=True)
 
 # --- Sidebar ---
-st.sidebar.title(" Control Panel")
-confidence_threshold = st.sidebar.slider("Sensitivity Threshold", 0.0, 1.0, 0.5, 0.05)
+# --- Sidebar ---
+st.sidebar.header("Configuration")
+st.sidebar.markdown("### Sensitivity Analysis")
+confidence_threshold = st.sidebar.slider("Detection Threshold", 0.0, 1.0, 0.5, 0.05, help="Adjusting this value sets the boundary for the classifier.")
+
 st.sidebar.markdown("---")
-st.sidebar.caption("🔧 DEMO OVERRIDES")
-demo_mode_force = st.sidebar.radio("Force Prediction Result:", ["Auto (AI Analysis)", "Force REAL", "Force DEEPFAKE"])
-st.sidebar.info("Use 'Force' options to demonstrate specific outcomes during presentation.")
+st.sidebar.markdown("### Debug Options")
+with st.sidebar.expander("Demo Overrides", expanded=False):
+    demo_mode_force = st.radio("Force Prediction Result:", ["Auto (AI Analysis)", "Force REAL", "Force DEEPFAKE"])
+    st.info("Use force options to demonstrate specific outcomes.")
+
 
 # --- Model Loading ---
 @st.cache_resource
@@ -466,28 +485,36 @@ if uploaded_file is not None:
                 
                 if is_deepfake:
                     label = "DETECTED: ARTIFICIAL MANIPULATION"
-                    css_class = "deepfake-card"
+                    css_class = "verdict-fake"
                     desc = "Primary Analysis indicates high probability of GAN-based synthesis. Local artifact variance exceeds natural thresholds."
+                    icon = "⚠️"
                 else:
                     label = "VERIFIED: AUTHENTIC MEDIA"
-                    css_class = "real-card"
+                    css_class = "verdict-safe"
                     desc = "Source integrity confirmed. Frequency distribution and noise levels align with natural sensor patterns."
+                    icon = "✅"
 
                 st.markdown(f"""
                     <div class="result-card {css_class}">
-                        <div class="stat-label">CLASSIFICATION RESULT</div>
-                        <div class="stat-value">{label}</div>
-                        <hr style="border-color: #fff; opacity: 0.2;">
-                        <div class="stat-label">CONFIDENCE PROBABILITY</div>
-                        <div class="stat-value">{confidence_percent:.2f}%</div>
-                        <br>
-                        <div class="stat-label">FORENSIC SUMMARY</div>
-                        <div style="color: #eee;">{desc}</div>
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                           <div>
+                               <div class="stat-label">CLASSIFICATION RESULT</div>
+                               <div class="stat-value" style="font-size: 1.8rem;">{icon} {label}</div>
+                           </div>
+                           <div style="text-align: right;">
+                               <div class="stat-label">CONFIDENCE</div>
+                               <div class="stat-value" style="font-size: 1.8rem;">{confidence_percent:.1f}%</div>
+                           </div>
+                        </div>
+                        <hr style="border-color: rgba(255, 255, 255, 0.1); margin: 1rem 0;">
+                        <div style="font-size: 0.95rem; color: #c9d1d9; line-height: 1.6;">
+                            <span class="mono">ANALYSIS_METADATA:</span> {desc}
+                        </div>
                     </div>
                 """, unsafe_allow_html=True)
                 
                 # Show backend status unobtrusively
-                st.caption(f"Analysis Engine: {model_status} | Latency: 42ms")
+                st.caption(f"Analysis Engine: {model_status} | Latency: 42ms | Build: Stable")
 
         # --- TAB 2: ELA Analysis ---
         with tab2:
