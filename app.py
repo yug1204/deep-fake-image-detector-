@@ -323,10 +323,15 @@ def plot_3d_topology(image_pil):
     )
     return fig
 
+# --- Mode Selection ---
+app_mode = st.sidebar.selectbox("Analysis Mode", ["Single Image Forensics", "Real vs Fake Comparison"])
+
 # --- Main Interface ---
 st.markdown("### 🧬 Analysis Dashboard")
 
-uploaded_file = st.file_uploader("Upload Image Source", type=["jpg", "jpeg", "png"], help="High resolution images recommended for forensic analysis.")
+if app_mode == "Single Image Forensics":
+    uploaded_file = st.file_uploader("Upload Image Source", type=["jpg", "jpeg", "png"], help="High resolution images recommended for forensic analysis.")
+
 
 if uploaded_file is not None:
     try:
@@ -365,8 +370,7 @@ if uploaded_file is not None:
                     layer_viz_placeholder.image(image.resize((160,160)), caption="RAW INPUT TENSOR", use_column_width=True)
                     time.sleep(0.8)
 
-                    # --- SEQUENCE 2: SPECTRAL ANALYSIS (New!) ---
-                    update_log("FFT_SCAN: Analyzing Frequency Domain...")
+                    # --- SEQUENCFT_SCAN: Analyzing Frequency Domain...")
                     # Effect: Frequency Domain (Log scale simulation)
                     gray = image.convert("L")
                     # Fake a spectrum by just shifting pixels weirdly or using a gradient map
@@ -557,6 +561,79 @@ if uploaded_file is not None:
 
     except Exception as e:
         st.error(f"Error processing image: {e}")
+
+elif app_mode == "Real vs Fake Comparison":
+    st.markdown("### ⚔️ Comparative Analysis")
+    st.info("Upload a Reference (Real) image and a Suspect (Fake) image to visualize forensic differences.")
+    
+    col_c1, col_c2 = st.columns(2)
+    with col_c1:
+        st.subheader("1. Reference (Real)")
+        file_real = st.file_uploader("Upload Real Image", type=["jpg", "png", "jpeg"], key="real")
+    with col_c2:
+        st.subheader("2. Suspect (Fake)")
+        file_fake = st.file_uploader("Upload Fake Image", type=["jpg", "png", "jpeg"], key="fake")
+        
+    if file_real and file_fake:
+        try:
+            # Load images
+            img_real_pil = Image.open(file_real).convert("RGB")
+            img_fake_pil = Image.open(file_fake).convert("RGB")
+            
+            # Helper to resize for display comparison
+            def resize_contain(img, size=(300,300)):
+                return ImageOps.contain(img, size)
+
+            col_v1, col_v2 = st.columns(2)
+            with col_v1:
+                st.image(img_real_pil, caption=f"Real: {file_real.name}", use_column_width=True)
+            with col_v2: 
+                st.image(img_fake_pil, caption=f"Fake: {file_fake.name}", use_column_width=True)
+
+            st.markdown("---")
+            st.markdown("#### 🔍 Differential Diagnostics")
+            
+            # --- Difference Map ---
+            st.markdown("##### 1. Pixel Difference Map")
+            st.caption("Highlights raw pixel modifications. Brighter areas indicate higher variation.")
+            
+            # Ensure same size for difference calculation
+            monitor_size = (500, 500)
+            img_real_cv = img_real_pil.resize(monitor_size)
+            img_fake_cv = img_fake_pil.resize(monitor_size)
+            
+            diff_img = ImageChops.difference(img_real_cv, img_fake_cv)
+            # Boost brightness to make subtle edits visible
+            diff_boost = ImageEnhance.Brightness(diff_img).enhance(5.0)
+            diff_boost = ImageOps.colorize(diff_boost.convert("L"), black="#000000", white="#ff0055")
+            
+            st.image(diff_boost, caption="Amplified Difference Heatmap", use_column_width=True)
+            
+            # --- Side-by-Side Metrics ---
+            st.markdown("##### 2. Forensic Layers Comparison")
+            
+            col_m1, col_m2 = st.columns(2)
+            
+            with col_m1:
+                st.markdown("**Error Level Analysis (ELA)**")
+                ela_real = convert_to_ela_image(file_real, 90)
+                st.image(ela_real, caption="Real ELA", use_column_width=True)
+                
+                st.markdown("**Frequency Spectrum**")
+                fft_real = plot_fft_spectrum(img_real_pil)
+                st.image(fft_real, caption="Real FFT", use_column_width=True)
+
+            with col_m2:
+                st.markdown("**Error Level Analysis (ELA)**")
+                ela_fake = convert_to_ela_image(file_fake, 90)
+                st.image(ela_fake, caption="Fake ELA", use_column_width=True)
+                
+                st.markdown("**Frequency Spectrum**")
+                fft_fake = plot_fft_spectrum(img_fake_pil)
+                st.image(fft_fake, caption="Fake FFT", use_column_width=True)
+
+        except Exception as e:
+            st.error(f"Error comparing images: {e}")
 
 # --- Footer ---
 st.markdown("---")
